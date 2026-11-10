@@ -21,11 +21,11 @@
   /* what to build, by section. lite = no card, so no fill stage. */
   const PLAN = [
     { section: '#about',        blocks: [{ sel: '.win' }] },
-    { section: '#skills',       blocks: [{ sel: '.skill-group' }, { sel: '.marquee', lite: true }] },
-    { section: '#journey',      blocks: [{ sel: '.t-item' }] },
-    { section: '#projects',     blocks: [{ sel: '.proj-card' }] },
-    { section: '#achievements', blocks: [{ sel: '.ach-card' }] },
-    { section: '#contact',      blocks: [{ sel: '.contact-cta', lite: true }, { sel: '.socials', lite: true }] },
+    { section: '#skills',       blocks: [{ sel: '.win' }] },
+    { section: '#journey',      blocks: [{ sel: '.win' }] },
+    { section: '#projects',     blocks: [{ sel: '.win' }] },
+    { section: '#achievements', blocks: [{ sel: '.win' }] },
+    { section: '#contact',      blocks: [{ sel: '.win' }] },
   ];
 
   const NAMES = ['PID 043 · data', 'PID 044 · arch', 'PID 045 · train', 'PID 046 · out'];

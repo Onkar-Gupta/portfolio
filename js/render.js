@@ -119,106 +119,136 @@
     return s;
   }
 
-  /* ---------- skills ---------- */
+  /* ---------- skills: model.summary() ---------- */
   function buildSkills(c) {
-    const s = el('section', 'chapter');
+    const s = el('section', 'chapter win-chapter');
     s.id = c.id;
     const marquee = c.marquee.map(m => `${esc(m)} <em>✦</em>`).join(' ');
     s.innerHTML = chapterHead(c) + `
       <div class="ch-body">
-        <div class="skill-groups">
-          ${c.groups.map((g, i) => `
-            <div class="skill-group reveal" data-delay="${Math.min(i + 1, 4)}">
-              <h3>${esc(g.title)}</h3>
-              <div class="chips">${g.items.map(it => `<span class="chip">${esc(it)}</span>`).join('')}</div>
-            </div>`).join('')}
-        </div>
-        <div class="marquee reveal">
-          <div class="marquee-track">${marquee} ${marquee}</div>
+        <div class="win sum-win">
+          ${winBar('model.summary()', '~/architecture/')}
+          <div class="sum-row head"><span>layer</span><span>skills</span></div>
+          ${c.groups.map(g => {
+            const [layer, what] = g.title.split(' · ');
+            return `<div class="sum-row"><span class="sum-name"><b>${esc(layer)}</b><i>${esc(what || '')}</i></span>` +
+                   `<span class="chips">${g.items.map(it => `<span class="chip">${esc(it)}</span>`).join('')}</span></div>`;
+          }).join('')}
+          <div class="win-ticker"><div class="marquee-track">${marquee} ${marquee}</div></div>
+          <div class="win-status"><span><b>layers</b> ${c.groups.length}</span><span>${c.groups.reduce((n, g) => n + g.items.length, 0)} skills</span></div>
         </div>
       </div>` + eggHTML(c);
     return s;
   }
 
-  /* ---------- journey ---------- */
+  /* ---------- journey: git log --graph ---------- */
   function buildJourney(c) {
-    const s = el('section', 'chapter');
+    const s = el('section', 'chapter win-chapter');
     s.id = c.id;
     s.innerHTML = chapterHead(c) + `
       <div class="ch-body">
-        <div class="timeline">
+        <div class="win log-win">
+          ${winBar('git log --graph', '~/training/')}
           ${c.epochs.map((e, i) => `
-            <div class="t-item reveal" data-delay="${Math.min(i + 1, 4)}">
-              <div class="t-meta">
-                <span class="t-epoch">${esc(e.epoch)}</span>
-                <span class="t-loss">${esc(e.loss)}</span>
-                <span class="t-date">${esc(e.date)}</span>
+            <div class="log-row${i === 0 ? ' first' : ''}${i === c.epochs.length - 1 ? ' last' : ''}">
+              <span class="log-rail"><i></i></span>
+              <div class="log-main">
+                <div class="log-line"><b>${esc(e.epoch)}</b>${i === 0 ? ' <em class="log-head">HEAD</em>' : ''}<span class="log-tag">${esc(e.loss)}</span><span class="log-date">${esc(e.date)}</span></div>
+                <h3>${esc(e.heading)}</h3>
+                <h4>${esc(e.org)}</h4>
+                <p>${esc(e.desc)}</p>
+                ${ptsHTML(e.points)}
               </div>
-              <h3>${esc(e.heading)}</h3>
-              <h4>${esc(e.org)}</h4>
-              <p>${esc(e.desc)}</p>
-              ${ptsHTML(e.points)}
             </div>`).join('')}
+          <div class="win-status"><span><b>git</b> log</span><span>${c.epochs.length} commits</span><span>loss goes down</span></div>
         </div>
       </div>` + eggHTML(c);
     return s;
   }
 
-  /* ---------- projects ---------- */
+  /* ---------- projects: a file explorer with a preview pane ---------- */
   function buildProjects(c) {
-    const s = el('section', 'chapter');
+    const s = el('section', 'chapter win-chapter');
     s.id = c.id;
+    const short = (t) => t.split(':')[0].replace(/\s*\(.*\)/, '');
     s.innerHTML = chapterHead(c) + `
-      <div class="ch-body proj-grid">
-        ${c.items.map((p, i) => `
-          <div class="proj-card reveal" data-delay="${Math.min(i + 1, 4)}">
-            <span class="proj-num">output_${esc(p.num)}</span>
-            <h3>${esc(p.title)}</h3>
-            <p>${esc(p.desc)}</p>
-            ${ptsHTML(p.points)}
-            <div class="proj-tags">${p.tags.map(t => `<span>${esc(t)}</span>`).join('')}</div>
-            <div class="proj-links">
-              ${p.links.map(l => `<a href="${l.href}">${esc(l.label)}</a>`).join('')}
+      <div class="ch-body">
+        <div class="win xp-win">
+          ${winBar('outputs/', '~/outputs/')}
+          <div class="xp">
+            <div class="xp-list" role="tablist" aria-label="projects">
+              ${c.items.map((p, i) => `
+                <button class="xp-file${i === 0 ? ' on' : ''}" type="button" role="tab" data-i="${i}" aria-selected="${i === 0}">
+                  <span class="xp-name">output_${esc(p.num)}</span><span class="xp-title">${esc(short(p.title))}</span>
+                </button>`).join('')}
             </div>
-          </div>`).join('')}
+            <div class="xp-view">
+              ${c.items.map((p, i) => `
+                <div class="xp-pane" data-i="${i}"${i === 0 ? '' : ' hidden'}>
+                  <span class="xp-key">${esc(p.key)}</span>
+                  <h3>${esc(p.title)}</h3>
+                  <p>${esc(p.desc)}</p>
+                  ${ptsHTML(p.points)}
+                  <div class="proj-tags">${p.tags.map(t => `<span>${esc(t)}</span>`).join('')}</div>
+                  <div class="proj-links">${p.links.map(l => `<a href="${l.href}" target="_blank" rel="noopener">${esc(l.label)}</a>`).join('')}</div>
+                </div>`).join('')}
+            </div>
+          </div>
+          <div class="win-status"><span><b>${c.items.length}</b> files</span><span class="xp-sel">output_${esc(c.items[0].num)} selected</span></div>
+        </div>
       </div>` + eggHTML(c);
+    s.querySelectorAll('.xp-file').forEach((b) => b.addEventListener('click', () => {
+      const i = b.dataset.i;
+      s.querySelectorAll('.xp-file').forEach((f) => { const on = f === b; f.classList.toggle('on', on); f.setAttribute('aria-selected', on); });
+      s.querySelectorAll('.xp-pane').forEach((pn) => { pn.hidden = pn.dataset.i !== i; });
+      s.querySelector('.xp-sel').textContent = `output_${c.items[i].num} selected`;
+    }));
     return s;
   }
 
-  /* ---------- achievements ---------- */
+  /* ---------- achievements: a test report ---------- */
   function buildAchievements(c) {
-    const s = el('section', 'chapter');
+    const s = el('section', 'chapter win-chapter');
     s.id = c.id;
     s.innerHTML = chapterHead(c) + `
-      <div class="ch-body ach-grid">
-        ${c.items.map((a, i) => `
-          <div class="ach-card reveal" data-delay="${Math.min(i + 1, 4)}">
-            <span class="ach-icon">${esc(a.icon)}</span>
-            <h3>${esc(a.title)}</h3>
-            <p>${esc(a.desc)}</p>
-          </div>`).join('')}
+      <div class="ch-body">
+        <div class="win test-win">
+          ${winBar('pytest evaluation/', '~/evaluation/')}
+          <div class="t-head">collected ${c.items.length} items</div>
+          ${c.items.map(a => `
+            <div class="t-row">
+              <span class="t-name">${esc(a.title)}</span><span class="t-res">PASSED</span>
+              <p>${esc(a.desc)}</p>
+            </div>`).join('')}
+          <div class="win-status"><span><b>${c.items.length} passed</b></span><span>0 failed</span></div>
+        </div>
       </div>` + eggHTML(c);
     return s;
   }
 
-  /* ---------- contact ---------- */
+  /* ---------- contact: a terminal ---------- */
   function buildContact(c) {
-    const s = el('section', 'chapter');
+    const s = el('section', 'chapter win-chapter');
     s.id = c.id;
     s.innerHTML = `
       <header class="ch-head">
-        <span class="ch-num">${esc(c.num)}</span>
+        <span class="ch-num reveal">${esc(c.num)}</span>
         <div>
           <span class="ch-tag reveal">epoch ${esc(c.num)} · ${esc(c.tag)}</span>
           <h2 class="ch-title"><span class="scramble" data-text="${esc(c.title)}">${esc(c.title)}</span></h2>
           <p class="ch-narrative reveal" data-delay="1">${esc(c.narrative)}</p>
         </div>
       </header>
-      <div class="contact-cta reveal" data-delay="2">
-        <a href="mailto:${CONTENT.meta.email}" class="btn btn-solid magnetic">${esc(c.ctaLabel)}</a>
-      </div>
-      <div class="socials reveal" data-delay="3">
-        ${c.socials.map(so => `<a class="magnetic" href="${so.href}">${esc(so.label)}</a>`).join('')}
+      <div class="ch-body">
+        <div class="win sh-win">
+          ${winBar('deploy.sh', '~/deploy/')}
+          <div class="sh-row first"><span class="sh-p">#</span>pick a way to reach me</div>
+          <div class="sh-buttons">
+            <a class="sh-btn solid" href="mailto:${CONTENT.meta.email}">${esc(c.ctaLabel)}</a>
+            ${c.socials.map(so => `<a class="sh-btn" href="${so.href}"${so.href.startsWith('mailto') ? '' : ' target="_blank" rel="noopener"'}>${esc(so.label)}</a>`).join('')}
+          </div>
+          <div class="win-status"><span><b>exit</b> 0</span><span>${esc(CONTENT.meta.email)}</span></div>
+        </div>
       </div>` + eggHTML(c);
     return s;
   }

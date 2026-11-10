@@ -299,7 +299,7 @@
   /* small interface sounds: a soft tick when the pointer reaches a link, button or window, and a blip on a
      click. One short oscillator each, at most one every 90 ms, so they cost nothing. */
   let lastUi = 0;
-  const UI = 'a, button, .win, .chip, .rec';
+  const UI = 'a, button, .win, .chip, .rec, .xp-file, .sh-btn';
   document.addEventListener('mouseover', (e) => {
     if (!enabled || !ctx || ctx.state !== 'running') return;
     const t = e.target.closest && e.target.closest(UI);

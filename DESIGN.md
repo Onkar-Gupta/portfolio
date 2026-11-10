@@ -218,3 +218,23 @@ Shared state: `window.MIND` (scroll, theme, `remeasure`, `playGlitch`) and `wind
 - Not yet checked on a real phone: the About, skills, certifications and contact scenes, and
   the brain dive.
 - The glitch blends into the monitor by colour; this has been set but not seen mid-glitch.
+
+## 10. The sections below the film: his desktop
+
+After the film, each epoch is one window styled as the program that fits its content (`css/windows.css`,
+built in `js/render.js`). Every window has a title bar (three dots, a file tab, a path), rows, and a
+status bar, and the colours follow the journey variables, so the windows go from dark to stone with the
+page. Each window is one build block, so the helper cursors fly to it, trace its border, fill it and
+reveal its rows one by one. The words come only from `js/content.js`.
+
+| Epoch | Window | Content |
+|---|---|---|
+| 01 data | `about.md` editor and `stats.csv` table | paragraphs with line numbers and a caret; the three stats as a table |
+| 02 architecture | `model.summary()` | one row per skill layer with chips, a ticker of keywords, a status bar |
+| 03 training | `git log --graph` | one commit per role or degree, with the epoch, the loss, the date and the points |
+| 04 outputs | `outputs/` file explorer | six files on the left; click one to see its description, numbers, tags and links (a row of tabs on phones) |
+| 05 evaluation | `pytest evaluation/` | one PASSED line per certification |
+| 06 deploy | `deploy.sh` terminal | the main button and the github, linkedin and email buttons in one landscape row (wrapping on phones) |
+
+Small accent text inside windows is mixed toward the text colour (`--acc-text`) so it stays readable
+when the page turns light. Checked on screenshots at desktop and phone width, not on a real phone.

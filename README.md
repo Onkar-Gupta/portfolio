@@ -33,6 +33,7 @@ portfolio/
 │   ├── sections.css    chapters, hero, skills, timeline, projects, bullet points
 │   ├── animations.css  reveals, glitch keyframes
 │   ├── build.css       the card build stages, helper cursors, typed titles, log
+│   ├── windows.css     the desktop windows below the film
 │   └── film.css        the film layer, the cards over it, the project modal
 ├── js/
 │   ├── content.js      ALL the words (edit this)
