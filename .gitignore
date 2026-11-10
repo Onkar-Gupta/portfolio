@@ -1,0 +1,7 @@
+# earlier encodes and originals of the clips, scratch folders
+media/_*/
+.playwright-mcp/
+# files the page does not load
+media/film-b.mp4
+js/guide.js
+js/terminal.js
