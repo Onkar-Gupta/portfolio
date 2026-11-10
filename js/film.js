@@ -659,6 +659,7 @@
     const inside = f >= 0 && f <= total;
     /* while the film fully covers the screen, nothing under it needs drawing: hide the page, the canvases and
        the grain so the browser composites only the video and the boxes (see .film-on in film.css) */
+    FS.past = f > total;                              // sound.js plays its tune once the film is behind us
     const covered = f >= 60 && f < fadeStart - 40;
     if (covered !== lastCovered) { lastCovered = covered; document.documentElement.classList.toggle('film-on', covered); }
     if (inside !== filmOn) { filmOn = inside; film.classList.toggle('on', inside); }

@@ -157,7 +157,13 @@ passes through a compressor; the sound is suspended when the tab is hidden.
 | each new scene | a two-note chime (a chord for the contact scene) |
 | cursors building cards | a whoosh, a tick, a soft fill, a pop and a two-note "done" (rate limited) |
 | clip C, the catch | a rising shimmer |
+| the sections below the film | a four-bar tune in A minor (chords Am, F, C, G, 84 beats a minute): a plucked arpeggio, a soft bass note and a singing melody with a short echo. It fades in when the film is behind you and out if you scroll back up |
+| links, buttons, windows and disks | a soft tick as the pointer arrives and a small blip on a click (at most one every 90 ms) |
 | the floppy archive | a drive whirr and seek ticks while you scroll; a clack and shutter tsk for each disk; a spin-up when a disk opens |
+
+The tune is scheduled ahead of time on the audio clock by a 120 ms timer (about 7 notes a second),
+so it costs the page almost nothing; `film.js` sets `MIND.film.past` once the film is behind you.
+All sound is synthesised in the browser, so there are no audio files.
 
 Sounds listen to events (`site-enter`, `glitch`, `build`, `film-scene`, `film-disk`,
 `film-open`) and to `MIND.film`, which `film.js` sets every frame.
@@ -196,7 +202,9 @@ Shared state: `window.MIND` (scroll, theme, `remeasure`, `playGlitch`) and `wind
   are in `media/_v2/`.
 - Scroll-blocking listeners (wheel, touch) exist only while the movie plays; a permanent blocking
   wheel listener makes every scroll step wait for the script.
-- Speed, things that were measured to matter: (1) the brain draws its 1,500 lines and 650 dots in
+- Speed, things that were measured to matter: (0) the background dot network draws its links in 4 batches
+  and the cursor ring moves by transform, not left and top; the brain canvas is cleared once, not every
+  frame, after it fades. (1) the brain draws its 1,500 lines and 650 dots in
   6 and 8 batches (one path and one fill each) instead of one call each; this was 41% of the main
   thread. (2) While the film covers the screen, the page, both canvases and the grain are hidden
   (`html.film-on`, `visibility: hidden`, so layout is unchanged). (3) Boxes inside the film have no

@@ -12,6 +12,7 @@
      wind       the free fall; louder the faster you scroll
      pad        a soft chord under the orbit
      drive      a floppy drive whirr while the disks scroll, with seek ticks
+     melody     a slow tune for the sections below the film (see buildMelody)
    One-shots:
      glitch burst, eject alarm and glass shatter, catch chime,
      scene chimes, cursor sounds as cards are built, disk insert click,
@@ -51,6 +52,7 @@
     for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
 
     buildLayers();
+    buildMelody();
     return true;
   }
 
@@ -99,6 +101,72 @@
   }
 
   const set = (p, v, tc) => p.setTargetAtTime(v, ctx.currentTime, tc || 0.12);
+
+  /* ---------- the melody: the sections below the film ----------
+     A four-bar tune in A minor, chords Am, F, C, G, at 84 beats a minute: a plucked arpeggio, a soft bass
+     note and a singing melody on top, through a short echo. Notes are scheduled a little ahead of time with
+     the audio clock (a timer every 120 ms, a handful of notes a bar), so it costs the page almost nothing.
+     It fades in when you leave the film and out if you scroll back up into it. */
+  const BPM = 84, BEAT = 60 / BPM, BARS = 4, LOOK = 0.45;
+  const mtof = (m) => 440 * Math.pow(2, (m - 69) / 12);
+  const CHORDS = [[57, 60, 64, 69], [53, 57, 60, 65], [55, 60, 64, 67], [55, 59, 62, 67]];   // Am F C G, low voicings
+  const BASS = [45, 41, 48, 43];
+  const ARP = [0, 1, 2, 3, 2, 1, 2, 1];                       // eight notes a bar
+  const TUNE = [                                               // [midi note, start beat, length in beats]
+    [76, 0, 1], [74, 1, 0.5], [72, 1.5, 0.5], [69, 2, 2],
+    [72, 4, 1], [69, 5, 0.5], [72, 5.5, 0.5], [77, 6, 2],
+    [76, 8, 1.5], [79, 9.5, 0.5], [76, 10, 1], [72, 11, 1],
+    [74, 12, 1], [71, 13, 1], [67, 14, 1], [71, 15, 1],
+  ];
+  let melBus = null, melTimer = 0, melNext = 0, melOn = false;
+
+  function buildMelody() {
+    melBus = ctx.createGain(); melBus.gain.value = 0;
+    melBus.connect(master);
+    const dly = ctx.createDelay(1); dly.delayTime.value = BEAT * 0.75;     // a dotted-eighth echo
+    const fb = ctx.createGain(); fb.gain.value = 0.34;
+    const wet = ctx.createGain(); wet.gain.value = 0.28;
+    const lp = filt('lowpass', 2400);
+    melBus.connect(dly); dly.connect(lp); lp.connect(fb); fb.connect(dly); lp.connect(wet); wet.connect(master);
+  }
+  function note(type, midi, t, len, vol, atk, cut) {
+    const o = ctx.createOscillator(), g = ctx.createGain(), f = filt('lowpass', cut);
+    o.type = type; o.frequency.value = mtof(midi);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(vol, t + atk);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + len);
+    o.connect(f); f.connect(g); g.connect(melBus);
+    o.start(t); o.stop(t + len + 0.05);
+  }
+  function scheduleBar(bar, t0) {
+    const c = CHORDS[bar];
+    note('sine', BASS[bar], t0, BEAT * 3.8, 0.05, 0.03, 400);                        // the bass, one long note
+    ARP.forEach((k, i) => note('triangle', c[k], t0 + i * BEAT / 2, BEAT * 1.1, 0.03, 0.008, 1800));   // the pluck
+    TUNE.forEach(([m, b, d]) => {
+      if (b >= bar * 4 && b < bar * 4 + 4) {                                         // the singing line
+        const t = t0 + (b - bar * 4) * BEAT;
+        note('sine', m, t, d * BEAT * 1.05 + 0.25, 0.05, 0.025, 3000);
+        note('triangle', m + 12, t, d * BEAT * 0.8 + 0.1, 0.008, 0.02, 3000);        // a soft octave above for shine
+      }
+    });
+  }
+  let melBar = 0;
+  function melodyTick() {
+    if (!melOn || !ctx || ctx.state !== 'running') return;
+    if (melNext < ctx.currentTime) { melNext = ctx.currentTime + 0.1; melBar = 0; }   // (re)start cleanly
+    while (melNext < ctx.currentTime + LOOK) {
+      scheduleBar(melBar % BARS, melNext);
+      melNext += BEAT * 4; melBar++;
+    }
+  }
+  function melodyTo(on) {
+    if (on === melOn) return;
+    melOn = on;
+    if (!melBus) return;
+    set(melBus.gain, on ? 1 : 0, on ? 1.2 : 0.5);
+    if (on) { melNext = 0; melBar = 0; if (!melTimer) melTimer = setInterval(melodyTick, 120); melodyTick(); }
+    else setTimeout(() => { if (!melOn && melTimer) { clearInterval(melTimer); melTimer = 0; } }, 3000);
+  }
 
   /* ---------- one-shot building blocks ---------- */
   function env(g, t, attack, peak, decay) {
@@ -171,6 +239,7 @@
     enabled = v;
     if (btn) btn.setAttribute('aria-pressed', v ? 'true' : 'false');
     if (!ctx) return;
+    if (!v) melodyTo(false);
     if (v) ctx.resume();
     set(master.gain, v ? 0.9 : 0, 0.06);
   }
@@ -227,6 +296,24 @@
   });
   on('film-open', spinUp);
 
+  /* small interface sounds: a soft tick when the pointer reaches a link, button or window, and a blip on a
+     click. One short oscillator each, at most one every 90 ms, so they cost nothing. */
+  let lastUi = 0;
+  const UI = 'a, button, .win, .chip, .rec';
+  document.addEventListener('mouseover', (e) => {
+    if (!enabled || !ctx || ctx.state !== 'running') return;
+    const t = e.target.closest && e.target.closest(UI);
+    if (!t || t === e.relatedTarget || (e.relatedTarget && t.contains(e.relatedTarget))) return;
+    const now = performance.now();
+    if (now - lastUi < 90) return;
+    lastUi = now;
+    tone('sine', t.matches('.win') ? 520 : 1250, null, 0.04, 0.018);
+  });
+  document.addEventListener('click', (e) => {
+    if (!enabled || !ctx || ctx.state !== 'running' || !e.target.closest || !e.target.closest('a, button, .rec')) return;
+    tone('triangle', 660, 990, 0.07, 0.03);
+  });
+
   /* ---------- the scroll-driven layers ---------- */
   let lastCur = MIND.current, lastT = performance.now(), speed = 0, keyAcc = 0, seekAcc = 0;
 
@@ -242,6 +329,7 @@
     const F = MIND.film || { inside: false };
     const dive = clamp(cur / (MIND.vh * 1.05), 0, 1);
     const inFilm = !!F.inside;
+    melodyTo(!!F.past && enabled);                    // the tune plays below the film only
 
     set(L.hum, inFilm ? 0.022 : 0.03 + dive * 0.02);
     set(L.riser, !inFilm && dive > 0.05 ? dive * dive * 0.09 : 0, 0.1);
