@@ -19,8 +19,7 @@ All the words live in **`js/content.js`**. It follows `master-cv.json`
 AWS claims, and only numbers that exist in a report or README. Cards take `points` for bullet
 points. Each project has a `key` (its one key number) and an `album` (the big number and its unit) printed on its floppy disk in the film.
 
-Still open in the content: the personal hook, a tagline of your own, the resume link, and the
-crop-research results.
+Still open in the content: the resume link and the crop-research results. The tagline (`hero.tagline`) and the personal hook (`about.hook`) are set in `js/content.js`.
 
 ## Structure
 
@@ -67,7 +66,7 @@ those sections.
 ## Roadmap
 
 - Check the remaining scenes and the dive on a real phone
-- Real tagline, personal hook and resume link
+- Resume link
 - Deploy on GitHub Pages and add the URL to LinkedIn and the CV
 
 ## Licence

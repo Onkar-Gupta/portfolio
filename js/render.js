@@ -55,6 +55,7 @@
       <p class="hero-kicker">${esc(h.kicker)}</p>
       <h1 class="hero-title"><span class="scramble" data-text="${esc(h.title)}">${esc(h.title)}</span></h1>
       <p class="hero-sub">${esc(h.subtitle)}</p>
+      <p class="hero-tag">${esc(h.tagline)}</p>
       <div class="scroll-hint">${esc(h.scrollHint)}</div>`;
     return s;
   }
@@ -96,6 +97,7 @@
     s.id = c.id;
     const rows = [
       `<div class="ed-row h first"><i>#</i>Onkar Gupta</div>`,
+      `<div class="ed-row q">${esc(c.hook)}</div>`,
       `<div class="ed-row blank"></div>`,
       ...c.paragraphs.map(p => `<div class="ed-row">${esc(p)}</div>`),
       `<div class="ed-row blank"></div>`,

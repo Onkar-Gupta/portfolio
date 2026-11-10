@@ -528,3 +528,11 @@
   .hero-sub { font-size: 0.9rem; line-height: 1.6; max-width: 34ch; }
   .scroll-hint { bottom: 5vh; }
 }
+
+/* the tagline under the hero subtitle */
+.hero-tag {
+  margin-top: 14px;
+  font-family: var(--mono); font-size: 0.86rem; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--accent);
+}
+@media (max-width: 700px) { .hero-tag { font-size: 0.7rem; letter-spacing: 0.1em; } }

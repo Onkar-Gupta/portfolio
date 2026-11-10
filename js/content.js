@@ -36,6 +36,7 @@ const CONTENT = {
     kicker: "epoch 00 · you are entering a mind",
     title: "Onkar Gupta",
     subtitle: "Computer vision and applied AI engineer. MSc Applied AI, University of Warwick.",
+    tagline: "Computer vision, tested before it is trusted.",
     scrollHint: "scroll to dive in ↓",
   },
 
@@ -57,6 +58,7 @@ const CONTENT = {
     id: "about", num: "01", tag: "the data",
     title: "Every model is only as good as its data.",
     narrative: "Here's mine.",
+    hook: "I write the pass marks before I run anything, and I publish the results that miss them.",
     egg: "",
     paragraphs: [
       "I'm Onkar, an MSc Applied AI graduate from WMG, University of Warwick. I build computer-vision and machine-learning systems, and I test them against protocols written before the results exist.",

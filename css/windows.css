@@ -209,3 +209,8 @@
 /* small accent text needs more contrast once the page turns light: mix the accent toward the text colour */
 .win { --acc-text: color-mix(in srgb, var(--accent) 60%, var(--txt)); }
 .win-status b, .t-res, .xp-name, .xp-key, .sum-name b, .log-line b, .log-main h4, .csv-row b, .sh-p, .ed-row.h i, .ed-row.li::after, .win-ticker em { color: var(--acc-text); }
+
+/* the personal hook: a markdown quote line at the top of about.md */
+.ed-row.q { font-style: italic; color: var(--txt); padding-left: 80px; }
+.ed-row.q::after { content: '>'; position: absolute; left: 62px; top: 3px; font-family: var(--mono); font-style: normal; color: var(--acc-text, var(--accent)); }
+@media (max-width: 560px) { .ed-row.q { padding-left: 62px; } .ed-row.q::after { left: 46px; } }
