@@ -1,0 +1,115 @@
+/* ============================================================
+   ANIMATIONS.CSS: keyframes, reveal states, glitch, panels
+   ============================================================ */
+
+/* ---------- scroll reveal: blur + rise ---------- */
+.reveal {
+  opacity: 0;
+  transform: translateY(44px);
+  transition:
+    opacity  0.9s var(--ease-out),
+    transform 0.9s var(--ease-out);
+}
+.reveal.visible { opacity: 1; transform: none; }
+.reveal[data-delay="1"] { transition-delay: 0.10s; }
+.reveal[data-delay="2"] { transition-delay: 0.22s; }
+.reveal[data-delay="3"] { transition-delay: 0.34s; }
+.reveal[data-delay="4"] { transition-delay: 0.46s; }
+
+/* ---------- zigzag reveals: chapters slide from their side ---------- */
+@media (min-width: 1000px) {
+  .ch-left  .reveal { transform: translate(-64px, 28px); }
+  .ch-right .reveal { transform: translate(64px, 28px); }
+  .ch-left  .reveal.visible,
+  .ch-right .reveal.visible { transform: none; }
+}
+
+/* ---------- manga panels pop in one by one ---------- */
+.panel-grid .panel { opacity: 0; }
+.panel-grid.visible .panel { animation: panelIn 0.55s var(--ease-out) both; }
+.panel-grid.visible .panel:nth-child(1) { animation-delay: 0.05s; }
+.panel-grid.visible .panel:nth-child(2) { animation-delay: 0.20s; }
+.panel-grid.visible .panel:nth-child(3) { animation-delay: 0.35s; }
+.panel-grid.visible .panel:nth-child(4) { animation-delay: 0.50s; }
+.panel-grid.visible .sfx { animation: sfxPop 0.45s var(--ease-out) 0.5s both; }
+
+@keyframes panelIn {
+  from { opacity: 0; transform: scale(0.7) rotate(var(--rot)); }
+  to   { opacity: 1; transform: scale(1)   rotate(var(--rot)); }
+}
+@keyframes sfxPop {
+  0%   { opacity: 0; transform: scale(0)    rotate(18deg); }
+  70%  {             transform: scale(1.25) rotate(-9deg); }
+  100% { opacity: 1; transform: scale(1)    rotate(-6deg); }
+}
+
+/* ---------- scramble titles (JS-driven) ---------- */
+.scramble { display: inline-block; min-height: 1em; }
+
+/* ---------- loader ---------- */
+@keyframes neuronFire {
+  0%, 100% { fill: #1A120B; filter: none; }
+  50% { fill: #C8792C; filter: drop-shadow(0 0 6px #C8792C); }
+}
+@keyframes axonFlow { to { stroke-dashoffset: -22; } }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ---------- terminal-takeover glitch (CRT dying) ---------- */
+/* The glitch flickers hard, then thins out slowly. Its background is the exact colour
+   of the film's first frame (#3B2B1A), so the dissolve into the monitor has no step. */
+@keyframes crtFlicker {
+  0%   { opacity: 0; }
+  6%   { opacity: 1; }
+  14%  { opacity: 0.3; }
+  22%  { opacity: 1; }
+  34%  { opacity: 0.6; }
+  46%  { opacity: 1; }
+  58%  { opacity: 0.85; }
+  70%  { opacity: 0.6; }
+  82%  { opacity: 0.32; }
+  92%  { opacity: 0.12; }
+  100% { opacity: 0; }
+}
+@keyframes crtTear {
+  0%   { transform: translateY(0); clip-path: inset(0); opacity: 1; }
+  18%  { transform: translateY(-14px) skewX(-3deg); clip-path: inset(4% 0 12% 0); }
+  36%  { transform: translateY(9px); clip-path: inset(20% 0 3% 0); }
+  55%  { transform: translateY(-5px) skewX(2deg); clip-path: inset(0 0 30% 0); opacity: 1; }
+  75%  { transform: translateY(6px); clip-path: inset(35% 0 0 0); opacity: 0.45; }
+  100% { transform: translateY(0); clip-path: inset(0); opacity: 0; }
+}
+
+/* ---------- konami: the page inverts like flipped film ---------- */
+@keyframes inkFlip {
+  0%, 100% { filter: none; }
+  16% { filter: invert(1); }
+  32% { filter: none; }
+  48% { filter: invert(1) hue-rotate(45deg); }
+  64% { filter: none; }
+  80% { filter: invert(1); }
+}
+
+/* ---------- monitor power LED ---------- */
+@keyframes ledBreathe {
+  0%, 100% { opacity: 1; box-shadow: 0 0 8px #C8792C; }
+  50% { opacity: 0.55; box-shadow: 0 0 3px #C8792C; }
+}
+
+/* ---------- misc keyframes ---------- */
+@keyframes blink { 50% { opacity: 0; } }
+@keyframes float { 50% { transform: translate(-50%, 9px); } }
+@keyframes scrollx { to { transform: translateX(-50%); } }
+
+/* ---------- reduced motion: everything appears instantly ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; filter: none; transition: none; }
+  .panel-grid .panel { opacity: 1; animation: none !important; }
+  .panel-grid.visible .sfx { animation: none; opacity: 1; }
+  .marquee-track, .scroll-hint { animation: none; }
+  #glitch-overlay.play, #glitch-overlay.play pre { animation: none; opacity: 0; }
+  #loader .nr, #loader .ax { animation: none; }
+  body.overclock { animation: none; }
+}

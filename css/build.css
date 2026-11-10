@@ -1,0 +1,161 @@
+/* ============================================================
+   BUILD.CSS: blocks that build themselves (step 2, staged)
+   A card is built in stages by a helper cursor (data-state):
+     empty    hidden, keeps its size
+     trace    the cursor draws the border
+     fill     the fill wipes in, top to bottom
+     content  the card is real; its parts appear one by one
+              (headlines type in, text fades up)
+     done     finished
+   "lite" blocks (plain text, no card) skip the fill.
+   Hiding only applies when build.js adds .build-on to <html>
+   (JS running and motion allowed). Without it the page is complete.
+   ============================================================ */
+
+[data-block] { position: relative; }
+
+/* unbuilt blocks are invisible but keep their box; the overlay stays visible */
+.build-on [data-block][data-state="empty"],
+.build-on [data-block][data-state="trace"],
+.build-on [data-block][data-state="fill"] { visibility: hidden; }
+
+/* in the content stage the card is real, but each part waits for its turn */
+.build-on [data-block][data-state="content"] > :not(.b-ov):not([data-in]) { visibility: hidden; }
+[data-in] { animation: kidIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) backwards; }
+@keyframes kidIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ---------- the overlay: trace, fill, labels ---------- */
+.b-ov {
+  --t: 0;                       /* border trace progress, 0 to 1 */
+  --f: 0;                       /* fill wipe progress, 0 to 1 */
+  position: absolute; inset: 0;
+  visibility: visible;
+  pointer-events: none;
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+[data-state="trace"] > .b-ov,
+[data-state="fill"] > .b-ov { opacity: 1; }
+
+.b-trace {
+  position: absolute; left: 0; top: 0;
+  width: 100%; height: 100%;
+  overflow: visible;
+}
+.b-trace rect {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.5;
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc(1 - var(--t));
+}
+
+.b-fill {
+  position: absolute; inset: 0;
+  border-radius: inherit;
+  background: var(--panel);
+  clip-path: inset(0 0 calc((1 - var(--f)) * 100%) 0);
+}
+
+.b-lbl {
+  position: absolute; left: 8px; top: 8px;
+  font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.08em;
+  color: var(--txt);
+  background: color-mix(in srgb, var(--accent) 35%, transparent);
+  padding: 2px 7px; border-radius: 3px;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+[data-state="trace"] > .b-ov .b-lbl { opacity: 1; }
+
+.b-tip {
+  position: absolute; right: 8px; bottom: 8px;
+  font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.06em;
+  color: var(--cream); background: var(--deep);
+  padding: 3px 8px; border-radius: 3px;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+[data-state="fill"] > .b-ov .b-tip { opacity: 1; }
+
+/* ---------- typed headlines inside cards (no reflow) ---------- */
+[data-typing] { color: transparent !important; position: relative; }
+.k-typing {
+  position: absolute; left: 0; top: 0; right: 0;
+  color: var(--kc, var(--txt));
+  pointer-events: none;
+}
+
+/* ---------- helper cursors ---------- */
+.helpers {
+  position: fixed; inset: 0;
+  z-index: 90;                  /* above the page and the film, below the nav and HUD */
+  pointer-events: none;
+}
+.helper {
+  position: absolute; left: 0; top: 0;
+  opacity: 0;
+  will-change: transform, opacity;
+  transition: opacity 0.25s;
+}
+.helper svg { display: block; width: 20px; height: 22px; overflow: visible;
+ }
+.helper .h-tag {
+  position: absolute; left: 15px; top: 17px;
+  font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.06em;
+  color: var(--cream); background: var(--deep);
+  border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent);
+  padding: 2px 8px; border-radius: 999px;
+  white-space: nowrap;
+}
+
+/* ---------- typed chapter titles (no reflow) ---------- */
+/* hidden from load until typed, so there is no flash of the full title */
+.build-on .ch-title .scramble[data-typed]:not([data-done]) { color: transparent; position: relative; }
+.b-typing {
+  position: absolute; left: 0; top: 0; right: 0;
+  color: var(--txt);
+  pointer-events: none;
+}
+.b-caret {
+  display: inline-block;
+  width: 2px; height: 1.05em;
+  margin: 0 -2px 0 2px;
+  vertical-align: -0.12em;
+  background: var(--accent);
+  animation: bCaret 0.9s steps(1) infinite;
+}
+@keyframes bCaret { 50% { opacity: 0; } }
+
+/* ---------- corner log ---------- */
+.b-log {
+  position: fixed; left: 18px; bottom: 18px;
+  z-index: 150;
+  max-width: min(420px, 60vw);
+  padding: 8px 12px;
+  font-family: var(--mono); font-size: 0.62rem; line-height: 1.7; letter-spacing: 0.02em;
+  color: var(--cream);
+  background: color-mix(in srgb, var(--deep) 88%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+  border-radius: 6px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+.b-log.on { opacity: 1; }
+.b-log-line { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.b-log-line:nth-last-child(n+4) { opacity: 0.55; }
+.b-log .t { color: color-mix(in srgb, var(--cream) 55%, transparent); }
+.b-log .a { color: var(--accent); }
+@media (max-width: 999px) { .b-log { display: none; } }
+
+@media (prefers-reduced-motion: reduce) {
+  [data-in] { animation: none; }
+  .b-ov, .helpers, .b-log { display: none; }
+}

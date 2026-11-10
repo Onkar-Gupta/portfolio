@@ -1,0 +1,111 @@
+/* ============================================================
+   WINDOWS.CSS: the sections below the film are his desktop.
+   Each epoch is a window styled as the program that fits its
+   content (editor, table, git log, file explorer, test report,
+   terminal). Colours come from the journey variables, so the
+   windows follow the dark-to-stone scroll like everything else.
+
+   A window is one build block: its direct children (title bar,
+   rows, status bar) are the "parts" the helper cursors reveal
+   one by one (see build.js).
+   ============================================================ */
+
+/* ---------- a smaller chapter heading above a window ---------- */
+.chapter.win-chapter .ch-head { margin-bottom: 44px; gap: 24px; }
+.chapter.win-chapter .ch-num { font-size: clamp(2.2rem, 4.4vw, 3.6rem); }
+.chapter.win-chapter .ch-title { font-size: clamp(1.5rem, 3vw, 2.4rem); max-width: 24ch; }
+.chapter.win-chapter .ch-narrative { margin-top: 12px; font-size: 0.98rem; }
+
+/* ---------- the window frame ---------- */
+.win {
+  position: relative;
+  display: flex; flex-direction: column;
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  overflow: hidden;                       /* the corners clip the title bar and the status bar */
+  background: var(--panel);
+  contain: layout paint;                  /* a window is drawn on its own: nothing outside it is repainted with it */
+  font-family: var(--mono);
+}
+.win-bar {
+  display: flex; align-items: center; gap: 12px;
+  padding: 9px 14px;
+  background: color-mix(in srgb, var(--txt) 7%, var(--panel));
+  border-bottom: 1px solid var(--line);
+  user-select: none;
+}
+.win-dots { display: inline-flex; gap: 6px; }
+.win-dots i { width: 9px; height: 9px; border-radius: 50%; background: color-mix(in srgb, var(--txt) 22%, transparent); }
+.win-dots i:first-child { background: var(--accent); }
+.win-tab {
+  font-size: 0.72rem; letter-spacing: 0.04em; color: var(--txt);
+  padding: 3px 10px; border-radius: 5px;
+  background: color-mix(in srgb, var(--txt) 10%, transparent);
+}
+.win-path { margin-left: auto; font-size: 0.66rem; letter-spacing: 0.06em; color: var(--muted); }
+.win-status {
+  display: flex; gap: 18px; flex-wrap: wrap;
+  padding: 6px 14px;
+  font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--muted);
+  border-top: 1px solid var(--line);
+  background: color-mix(in srgb, var(--txt) 5%, var(--panel));
+}
+.win-status b { color: var(--accent); font-weight: 500; }
+
+/* ---------- the text editor: about.md ---------- */
+.about-win { counter-reset: ln; }
+.ed-row {
+  position: relative;
+  display: block;
+  padding: 3px 18px 3px 62px;
+  font-family: var(--sans); font-size: 1rem; line-height: 1.85;
+  color: var(--muted);
+}
+.ed-row::before {                          /* the line number in the gutter */
+  counter-increment: ln;
+  content: counter(ln);
+  position: absolute; left: 0; top: 3px; width: 44px;
+  text-align: right;
+  font-family: var(--mono); font-size: 0.72rem; line-height: 2.6;
+  color: color-mix(in srgb, var(--txt) 34%, transparent);
+}
+.ed-row.blank { padding-top: 0; padding-bottom: 0; min-height: 0.9em; }
+.ed-row.blank::before { line-height: 0.9; }
+.ed-row.h { font-family: var(--mono); font-weight: 700; color: var(--txt); font-size: 1.05rem; }
+.ed-row.h i { color: var(--accent); font-style: normal; margin-right: 8px; }   /* the markdown # */
+.ed-row.li { padding-left: 80px; }
+.ed-row.li::after { content: '-'; position: absolute; left: 62px; top: 3px; color: var(--accent); font-family: var(--mono); }
+.ed-row .caret {                           /* the blinking caret at the end of the last line */
+  display: inline-block; width: 8px; height: 1.05em; margin-left: 4px;
+  vertical-align: text-bottom; background: var(--accent);
+  animation: blink 1s steps(1) infinite;
+}
+.ed-row.first { margin-top: 14px; }
+.ed-row.last { margin-bottom: 14px; }
+
+/* ---------- the table: stats.csv ---------- */
+.csv-row {
+  display: grid; grid-template-columns: 76px 1fr;
+  gap: 16px; align-items: baseline;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--line);
+}
+.csv-row.head { font-size: 0.64rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); padding: 9px 16px; }
+.csv-row b { font-size: 1.5rem; font-weight: 700; color: var(--accent); }
+.csv-row span { font-family: var(--sans); font-size: 0.86rem; line-height: 1.5; color: var(--muted); }
+.csv-row.head span { font-family: var(--mono); font-size: 0.64rem; }
+
+/* about: the editor beside the table */
+.about-split { display: grid; grid-template-columns: 1.5fr 0.8fr; gap: 28px; align-items: start; }
+@media (max-width: 900px) { .about-split { grid-template-columns: 1fr; gap: 22px; } }
+@media (max-width: 560px) {
+  .ed-row { padding-left: 46px; font-size: 0.94rem; }
+  .ed-row::before { width: 32px; }
+  .ed-row.li { padding-left: 62px; }
+  .ed-row.li::after { left: 46px; }
+  .win-path { display: none; }
+}
+
+/* a window that is still being built keeps its frame hidden with the rest (see build.css) */

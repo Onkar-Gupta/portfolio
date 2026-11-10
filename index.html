@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Onkar Gupta, Computer Vision &amp; AI Engineer</title>
+  <meta name="description" content="Portfolio of Onkar Gupta: computer vision and applied AI projects, MSc Applied AI, University of Warwick.">
+
+  <!-- Fonts: Sora (display) + IBM Plex Mono (terminal) + Bangers (manga SFX) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500;700&family=Bangers&display=swap" rel="stylesheet">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/sections.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/build.css">
+  <link rel="stylesheet" href="css/windows.css">
+  <link rel="stylesheet" href="css/film.css">
+</head>
+<body>
+
+  <!-- LOADER: neurons fire, then you pick your runtime mode -->
+  <div id="loader">
+    <svg viewBox="0 0 200 120" width="200" height="120" aria-hidden="true">
+      <line class="ax" x1="40" y1="30" x2="100" y2="60"/>
+      <line class="ax" x1="100" y1="60" x2="160" y2="30"/>
+      <line class="ax" x1="40" y1="90" x2="100" y2="60"/>
+      <line class="ax" x1="100" y1="60" x2="160" y2="90"/>
+      <line class="ax" x1="40" y1="30" x2="40" y2="90"/>
+      <line class="ax" x1="160" y1="30" x2="160" y2="90"/>
+      <circle class="nr" cx="40"  cy="30" r="5"/>
+      <circle class="nr" cx="160" cy="30" r="5"/>
+      <circle class="nr" cx="100" cy="60" r="7"/>
+      <circle class="nr" cx="40"  cy="90" r="5"/>
+      <circle class="nr" cx="160" cy="90" r="5"/>
+    </svg>
+    <p class="loader-line">initializing neural pathways<span class="ell">…</span></p>
+    <div class="sound-select">
+      <p>choose your audio</p>
+      <div>
+        <button data-sound="on">[ SOUND ON ]</button>
+        <button data-sound="off">[ SOUND OFF ]</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- training HUD -->
+  <div class="hud">
+    <div class="hud-bar"><i id="hud-fill"></i></div>
+    <span class="hud-label" id="hud-label">initializing…</span>
+  </div>
+
+  <!-- ambient particle network -->
+  <canvas id="net-canvas"></canvas>
+
+  <!-- wireframe brain, pure canvas: no dependencies (js/brain.js) -->
+  <canvas id="brain-canvas"></canvas>
+
+  <!-- terminal-takeover glitch (fires as you dive through the brain) -->
+  <div id="glitch-overlay" aria-hidden="true"><pre id="glitch-text"></pre></div>
+
+  <!-- custom cursor -->
+  <div class="cursor-dot"></div>
+  <div class="cursor-ring"></div>
+
+  <nav id="nav">
+    <a class="logo" id="logo" href="#hero"></a>
+    <div class="nav-right">
+      <ul class="nav-links" id="nav-links"></ul>
+    </div>
+  </nav>
+
+  <!-- smooth-scroll stage. Sections rendered into #app by js/render.js -->
+  <div id="smooth-wrapper">
+    <div id="smooth-content">
+      <main id="app"></main>
+      <footer id="footer"></footer>
+    </div>
+  </div>
+
+  <!-- 1. data  2. DOM  3. scroll/theme/path engine  4. brain  5. boot terminal  6. stick figure -->
+  <script src="js/content.js"></script>
+  <script src="js/render.js"></script>
+  <script src="js/effects.js"></script>
+  <script src="js/brain.js"></script>
+  <script src="js/build.js"></script>
+  <script src="js/film.js"></script>
+  <script src="js/sound.js"></script>
+</body>
+</html>
