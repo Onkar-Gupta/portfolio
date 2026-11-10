@@ -147,7 +147,7 @@ passes through a compressor; the sound is suspended when the tab is hidden.
 
 | Moment | Sound |
 |---|---|
-| the page | a low computer hum |
+| the page (hero and film only) | a low computer hum; below the film the tune plays alone |
 | the brain dive | a rising filtered noise |
 | the glitch | a burst of stuttering noise and a low thud |
 | clip A, the code writing | a key tick for every 26 px scrolled |

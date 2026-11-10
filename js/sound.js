@@ -331,8 +331,8 @@
     const inFilm = !!F.inside;
     melodyTo(!!F.past && enabled);                    // the tune plays below the film only
 
-    set(L.hum, inFilm ? 0.022 : 0.03 + dive * 0.02);
-    set(L.riser, !inFilm && dive > 0.05 ? dive * dive * 0.09 : 0, 0.1);
+    set(L.hum, F.past ? 0 : inFilm ? 0.022 : 0.03 + dive * 0.02, F.past ? 0.8 : 0.12);   // below the film the tune plays alone: no hum
+    set(L.riser, !inFilm && !F.past && dive > 0.05 ? dive * dive * 0.09 : 0, 0.1);   // the brain-dive noise: not below the film
     set(L.riserF, 250 + dive * 2600, 0.1);
     set(L.wind, inFilm && F.name === 'fall' ? 0.05 + clamp(speed / 2500, 0, 1) * 0.09 : 0);
     set(L.windF, 500 + clamp(speed, 0, 3000) * 0.35);
