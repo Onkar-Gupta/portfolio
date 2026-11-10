@@ -409,3 +409,32 @@ body.film-light .nav-links a::after { background: #8A4F12; }
    visibility keeps the layout (the scroll length does not change) but takes the page, the two canvases and
    the grain out of the browser's drawing and compositing while the video plays. */
 .film-on #smooth-wrapper, .film-on #net-canvas, .film-on #brain-canvas, .film-on body::before { visibility: hidden; }
+
+/* ---------- phones and small tablets: smaller boxes, so the character stays in view ----------
+   Each box keeps its heading and a short text; the bullet points and extra chips are left to the full
+   sections below. Boxes sit in the top and bottom bands and leave the middle of the screen clear. */
+@media (max-width: 999px) {
+  .fs .col.left, .fs .col.top { top: 9vh; }
+  .fs .col.right { bottom: 56px; }
+  .fs .fc { padding: 9px 12px; }
+  .fs .fc .k { margin-bottom: 4px; font-size: 0.54rem; letter-spacing: 0.12em; }
+  .fs .fc h3 { font-size: 0.86rem; line-height: 1.22; }
+  .fs .fc p {
+    margin-top: 4px; font-size: 0.7rem; line-height: 1.4;
+    display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden;
+  }
+  .fs .fc .pts, .fs .fc .hl { display: none; }
+  .fs .fc .chips { margin-top: 6px; gap: 4px; }
+  .fs .fc .chip { font-size: 0.58rem; padding: 2px 7px; }
+  .fs .fc .chips .chip:nth-child(n+5) { display: none; }
+  .fs .fc .n { margin-top: 5px; font-size: 0.66rem; }
+  .fs .fc-stats { margin-top: 6px; gap: 5px; }
+  .fs .fc-stats div { padding: 5px 3px; }
+  .fs .fc-stats b { font-size: 0.9rem; }
+  .fs .fc-stats span { font-size: 0.54rem; line-height: 1.2; }
+  .fs .col { gap: 6px; }
+}
+@media (max-width: 999px) and (max-height: 640px) {      /* short phones, or landscape: smaller still */
+  .fs .fc p { -webkit-line-clamp: 1; }
+  .fs .fc .chips .chip:nth-child(n+4) { display: none; }
+}
