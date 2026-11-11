@@ -58,7 +58,9 @@
     { name: 'floor', clip: 'c',  from: 1,     to: 1,     len: 300, restAt: [0.05, 0.22, 0.39, 0.56, 0.73, 0.90] },
   ];
   const ALBUM_SEG = 10;
-  const CLIP_FILES = { a: 'media/film-a.mp4', b1: 'media/film-b1.mp4', b2: 'media/film-b2.mp4', c: 'media/film-c.mp4' };
+  const PHONE = window.matchMedia('(max-width: 999px)').matches;      // phones and small tablets get the 540p, short-keyframe clips (media/m/)
+  const CLIP_DIR = PHONE ? 'media/m/' : 'media/';
+  const CLIP_FILES = { a: CLIP_DIR + 'film-a.mp4', b1: CLIP_DIR + 'film-b1.mp4', b2: CLIP_DIR + 'film-b2.mp4', c: CLIP_DIR + 'film-c.mp4' };
   const LEAD = -4;         // vh after the runway starts when the film cuts in: just after the brain has formed
   const FADE = 30;         // vh at the end where the film fades into the page
   const END_HOLD = 0.04;   // seconds kept off the end so the last frame is never dropped

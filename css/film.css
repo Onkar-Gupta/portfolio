@@ -438,3 +438,30 @@ body.film-light .nav-links a::after { background: #8A4F12; }
   .fs .fc p { -webkit-line-clamp: 1; }
   .fs .fc .chips .chip:nth-child(n+4) { display: none; }
 }
+
+/* ---------- portrait phones: the whole frame fits, centred ----------
+   The video is shown uncropped at full width in the middle of the screen (16:9, so it is a band), and its
+   top and bottom edges fade into the page. The boxes use the clear space above and below it. */
+@media (max-width: 999px) and (orientation: portrait) {
+  #film video {
+    inset: auto; left: 0; top: 50%; transform: translateY(-50%);
+    width: 100%; height: auto; aspect-ratio: 16 / 9;
+    object-fit: contain; object-position: 50% 50%;
+    -webkit-mask-image: linear-gradient(transparent, #000 10%, #000 90%, transparent);
+            mask-image: linear-gradient(transparent, #000 10%, #000 90%, transparent);
+  }
+  #film video[data-clip] { object-position: 50% 50%; }
+  /* smaller boxes: top band and bottom band only, never over the picture */
+  .fs .col { left: 5vw; right: 5vw; }
+  .fs .col.left, .fs .col.top { top: 10vh; top: 10dvh; }
+  .fs .col.right { bottom: 88px; }
+  .fs .col.mid { bottom: 88px; width: 90vw; }
+  .fs .fc { padding: 7px 10px; }
+  .fs .fc .k { font-size: 0.5rem; margin-bottom: 2px; }
+  .fs .fc h3 { font-size: 0.78rem; line-height: 1.2; }
+  .fs .fc p { font-size: 0.64rem; line-height: 1.35; -webkit-line-clamp: 2; margin-top: 3px; }
+  .fs .fc .chip { font-size: 0.52rem; padding: 1px 6px; }
+  .fs .fc-stats b { font-size: 0.8rem; }
+  .fs .fc-stats span { font-size: 0.5rem; }
+  .fs .fc .chips .chip:nth-child(n+4) { display: none; }
+}

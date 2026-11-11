@@ -40,7 +40,7 @@
     if (ctx) return true;
     const AC = window.AudioContext || window.webkitAudioContext;
     if (!AC) return false;
-    ctx = new AC();
+    ctx = new AC({ latencyHint: 'playback' });   // a bigger buffer: phones crackle and stutter with the default small one
     master = ctx.createGain();
     master.gain.value = 0;
     const comp = ctx.createDynamicsCompressor();
@@ -100,7 +100,15 @@
     L.whirr = whirr.gain;
   }
 
-  const set = (p, v, tc) => p.setTargetAtTime(v, ctx.currentTime, tc || 0.12);
+  /* the layers are updated every frame, and each call queues an automation event: hundreds a second on a phone.
+     A change under half a percent is not audible, so it is skipped. */
+  const lastSet = new WeakMap();
+  const set = (p, v, tc) => {
+    const o = lastSet.get(p);
+    if (o !== undefined && Math.abs(v - o) <= 0.005 * Math.abs(o) + 1e-5) return;
+    lastSet.set(p, v);
+    p.setTargetAtTime(v, ctx.currentTime, tc || 0.12);
+  };
 
   /* ---------- the melody: the sections below the film ----------
      A four-bar tune in A minor, chords Am, F, C, G, at 84 beats a minute: a plucked arpeggio, a soft bass
@@ -268,6 +276,15 @@
       tone('sine', 220, 440, 0.45, 0.05);       // power on
     }
   });
+  /* phones (iOS above all) keep the audio context suspended until a tap reaches it, and suspend it again after
+     a call or a tab switch. Every tap while sound is on therefore resumes it and plays one silent sample,
+     which is the trick that unlocks Web Audio on iOS. Cheap: it does nothing once the context is running. */
+  function unlock() {
+    if (!ctx || !enabled || ctx.state === 'running') return;
+    ctx.resume();
+    const b = ctx.createBufferSource(); b.buffer = ctx.createBuffer(1, 1, 22050); b.connect(ctx.destination); b.start(0);
+  }
+  ['touchend', 'pointerdown', 'click'].forEach((n) => document.addEventListener(n, unlock, { passive: true }));
   document.addEventListener('visibilitychange', () => {
     if (!ctx) return;
     if (document.hidden) ctx.suspend();

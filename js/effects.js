@@ -155,8 +155,10 @@
 
   function playGlitch() {
     window.dispatchEvent(new Event('glitch'));
-    const rows = Math.ceil(window.innerHeight / 20);
-    const cols = Math.ceil(window.innerWidth / 9);
+    /* size the grid from the real font, so the text fills the screen at any size and never runs off the edge */
+    const fs = parseFloat(getComputedStyle(glitchText).fontSize) || 12;
+    const rows = Math.max(1, Math.floor(window.innerHeight * 0.9 / (fs * 1.5)));
+    const cols = Math.max(1, Math.floor(window.innerWidth * 0.82 / (fs * 0.6)));
     glitch.classList.add('play');
     let frame = 0;
     clearInterval(glitchTimer);
@@ -164,7 +166,7 @@
       let out = '';
       for (let r = 0; r < rows; r++) {
         if (Math.random() < 0.12) {
-          const msg = PANICS[(Math.random() * PANICS.length) | 0];
+          const msg = PANICS[(Math.random() * PANICS.length) | 0].slice(0, cols);
           const pad = Math.max(0, ((Math.random() * (cols - msg.length)) | 0));
           out += ' '.repeat(pad) + msg + '\n';
         } else if (Math.random() < 0.25) {
