@@ -122,10 +122,11 @@ body::before {
   background: #3B2B1A;
   opacity: 0;
   visibility: hidden;
+  contain: strict;                  /* its own paint area: the page behind is not re-laid-out while it flickers */
 }
 #glitch-overlay.play {
   visibility: visible;
-  animation: crtFlicker 0.9s linear both;
+  animation: crtFlicker 1.5s linear both;
 }
 #glitch-overlay pre {
   position: absolute; inset: 0;
@@ -134,11 +135,10 @@ body::before {
   font-size: clamp(10px, 1.4vw, 15px);
   line-height: 1.5;
   color: var(--cream);
-  text-shadow: 0 0 8px rgba(200, 121, 44, 0.6);
   overflow: hidden;
   white-space: pre;
 }
-#glitch-overlay.play pre { animation: crtTear 0.9s steps(5) both; }
+#glitch-overlay.play pre { animation: crtTear 1.5s steps(8) both; }
 #glitch-overlay::after {              /* scanlines */
   content: '';
   position: absolute; inset: 0;

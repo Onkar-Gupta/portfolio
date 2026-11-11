@@ -176,12 +176,12 @@
         }
       }
       glitchText.textContent = out;
-      if (++frame > 12) {
+      if (++frame > 16) {
         clearInterval(glitchTimer);
         glitch.classList.remove('play');
         glitchText.textContent = '';
       }
-    }, 70);
+    }, 90);
   }
   MIND.playGlitch = playGlitch;      // film.js uses it to cover the cut into the first clip
 
@@ -192,12 +192,15 @@
 
   /* ---------- seamless handoff: the computer fades up exactly as
      the formed brain fades out (same scroll window) ---------- */
-  let rigEl = null;
+  let rigEl = null, lastRig = '';
   function updateBootEntrance() {
     if (!rigEl) { rigEl = document.getElementById('rig'); if (!rigEl) return; }
     const diveP = MIND.current / (MIND.vh * 1.05);
     const o = MIND.reduced ? 1 : clamp((diveP - 0.97) / 0.2, 0, 1);
-    rigEl.style.opacity = o.toFixed(3);
+    const os = o.toFixed(3);
+    if (os === lastRig) return;                       // write only when it changes: this runs every frame
+    lastRig = os;
+    rigEl.style.opacity = os;
     rigEl.style.transform = `translateY(${(1 - o) * 46}px) scale(${0.965 + o * 0.035})`;
   }
 

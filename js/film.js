@@ -506,20 +506,22 @@
       done = u >= ph.play[1] - 0.004 || v.ended;
     }
     window.scrollTo(0, filmStart + f);
-    if (done) beginPhase(phase + 1, 0);
+    if (done) beginPhase(phase + 1, 450);        // a short beat on the last frame, then the next clip fades in over it
   }
 
   function startIntro() {
     intro = 'playing';
     lockOn();
     clips.forEach((c) => { c.v.preload = 'auto'; });
-    /* hold the first frame for 0.6 s so the glitch can fade out over the still monitor, then play */
-    beginPhase(0, 600);
+    /* hold the first frame for 1.2 s so the longer glitch can dissolve over the still monitor, then play */
+    film.classList.add('movie');                  // slow, layered crossfades for the opening only (film.css)
+    beginPhase(0, 1200);
     introGuard = setTimeout(() => endIntro(false), 120000);   // the movie is about a minute: this only fires if a clip stalls
   }
   function endIntro(skipped) {
     if (intro !== 'playing') return;
     intro = 'done';
+    film.classList.remove('movie');
     clearTimeout(introGuard);
     clips.forEach((c) => { c.v.pause(); c.v.playbackRate = 1; });
     active = -1;                              // let the scroll logic choose the clip again

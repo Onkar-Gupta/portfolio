@@ -26,7 +26,7 @@
      the width and the hero text can sit below it */
   let PORTRAIT = false, BRAIN_Y = 0.48, SIL_Y = 0.46, UNIT = 21, ZOOM = 1.6;
   function resize() {
-    DPR = LITE ? 1 : Math.min(window.devicePixelRatio || 1, 1.5);
+    DPR = LITE ? 1 : Math.min(window.devicePixelRatio || 1, 1.25);
     W = window.innerWidth; H = window.innerHeight;
     PORTRAIT = W < 700 && H > W;
     BRAIN_Y = PORTRAIT ? 0.34 : 0.48;
