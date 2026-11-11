@@ -286,3 +286,8 @@ body.overclock { animation: inkFlip 3.5s steps(6) both; }
 #sound-btn[aria-pressed="false"] .on { display: none; }
 #sound-btn[aria-pressed="false"] .off { display: block; }
 @media (hover: none) { #sound-btn { cursor: pointer; } }
+
+/* phones: page text scrolls under the fixed name at the top, so give the nav a soft cover in the page colour */
+@media (max-width: 820px) {
+  nav { background: linear-gradient(var(--bg) 55%, transparent); padding-bottom: 14px; }
+}
