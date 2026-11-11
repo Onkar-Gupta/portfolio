@@ -643,7 +643,7 @@
   /* writes to the page cost a frame each, so every value is cached and only written when it changes */
   const FS = { inside: false, seg: 0, name: '', q: 0, f: 0, rest: 0 };
   MIND.film = FS;
-  let lastOp = '', lastLit = '', lastLight = null, lastHint = '', lastResting = null, filmOn = null, lastShowCount = null, lastCovered = false;
+  let lastOp = '', lastLit = '', lastLight = null, lastHint = '', lastResting = null, filmOn = null, lastShowCount = null, lastCovered = false, lastFloor = false;
   /* low-power mode: if frames average slower than about 36 fps while the film is on, switch off
      the film grain and the heavier shadows */
   let lastTs = 0, ema = 16, slow = 0, lite = false;
@@ -675,6 +675,7 @@
     lastTs = ts;
 
     if (!inside) {
+      if (lastFloor) { lastFloor = false; document.documentElement.classList.remove('film-floor'); }
       if (lastOp !== '0') {
         lastOp = '0';
         film.style.opacity = '0'; ui.style.opacity = '0'; rail.style.opacity = '0'; counter.style.opacity = '0';
@@ -689,6 +690,8 @@
       const s = segs[i];
       const q = clamp((f - s.start) / s.lenPx, 0, 1);
       const c = clips[s.ci];
+      const onFloor = s.name === 'floor';             // the empty floor behind the disks: phones show it full screen (film.css)
+      if (onFloor !== lastFloor) { lastFloor = onFloor; document.documentElement.classList.toggle('film-floor', onFloor); }
       FS.inside = true; FS.seg = i; FS.name = s.name; FS.q = q; FS.f = f;      // sound.js and effects.js read this
 
       if (intro !== 'playing' && s.ci !== active) {          // while the intro plays it chooses the clip itself

@@ -465,3 +465,12 @@ body.film-light .nav-links a::after { background: #8A4F12; }
   .fs .fc-stats span { font-size: 0.5rem; }
   .fs .fc .chips .chip:nth-child(n+4) { display: none; }
 }
+
+/* the floppy disks (the empty floor): the picture fills the phone screen as their background, no band */
+@media (max-width: 999px) and (orientation: portrait) {
+  html.film-floor #film video[data-clip="c"] {
+    inset: 0; top: 0; transform: none; width: 100%; height: 100%; aspect-ratio: auto;
+    object-fit: cover; object-position: 4% 62%;   /* the left side of the floor: patterns and light, the character is not there */
+    -webkit-mask-image: none; mask-image: none;
+  }
+}
