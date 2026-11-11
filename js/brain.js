@@ -18,12 +18,15 @@
   const ctx = canvas.getContext('2d');
   const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
 
+  /* phones and tablets: fewer neurons and links, a 1x canvas, no per-spike strokes. 620 nodes and 1,500 links at
+     1.5x resolution is what made the brain form stutter on a phone GPU */
+  const LITE = window.matchMedia('(max-width: 820px), (pointer: coarse)').matches;
   let W, H, DPR;
   /* tall, narrow screens (phones): a smaller brain in the upper part, so it fits across
      the width and the hero text can sit below it */
   let PORTRAIT = false, BRAIN_Y = 0.48, SIL_Y = 0.46, UNIT = 21, ZOOM = 1.6;
   function resize() {
-    DPR = Math.min(window.devicePixelRatio || 1, 1.5);
+    DPR = LITE ? 1 : Math.min(window.devicePixelRatio || 1, 1.5);
     W = window.innerWidth; H = window.innerHeight;
     PORTRAIT = W < 700 && H > W;
     BRAIN_Y = PORTRAIT ? 0.34 : 0.48;
@@ -38,7 +41,7 @@
   window.addEventListener('resize', resize);
 
   /* ---------- sample the brain volume (units ≈ ±9) ---------- */
-  const N = 620;
+  const N = LITE ? 340 : 620;
   const nodes = [];           /* {x,y,z, r(unit radius), phase} */
   while (nodes.length < N) {
     const u = Math.random() * 2 - 1;
@@ -70,7 +73,7 @@
 
   /* ---------- edges between near neighbours ---------- */
   const edges = [];
-  const LINKD2 = 2.3 * 2.3, MAXE = 1500;
+  const LINKD2 = LITE ? 3 * 3 : 2.3 * 2.3, MAXE = LITE ? 800 : 1500;
   outer:
   for (let i = 0; i < nodes.length; i++) {
     for (let j = i + 1; j < nodes.length; j++) {
@@ -95,7 +98,7 @@
 
   /* ---------- dendrite spikes on the surface (dot at each tip) ---------- */
   const spikes = [];
-  for (let i = 0; i < nodes.length && spikes.length < 70; i++) {
+  for (let i = 0; i < nodes.length && spikes.length < (LITE ? 36 : 70); i++) {
     const n = nodes[i];
     if (n.r > 0.86 && Math.random() < 0.4) {
       const len = 1.18 + Math.random() * 0.18;
@@ -145,7 +148,6 @@
     /* rotate around Y, then X */
     const x1 = x * cy + z * sx_;
     const z1 = -x * sx_ + z * cy;
-    const cosX = Math.cos(rotX), sinX = Math.sin(rotX);
     const yr = y * cosX - z1 * sinX;
     const zr = y * sinX + z1 * cosX;
 
@@ -155,7 +157,7 @@
     out[2] = clamp((f - 0.72) / 0.55, 0, 1);
   }
 
-  let rotX = 0, brainCleared = false;
+  let rotX = 0, cosX = 1, sinX = 0, brainCleared = false;
   const tmp = [0, 0, 0];
 
   /* ---------- animation loop ---------- */
@@ -193,6 +195,7 @@
     rotX = -0.12 + (MIND.mouse.y / H - 0.5) * 0.25 + dive * 0.25;
 
     const cy = Math.cos(spin), sy_ = Math.sin(spin);
+    cosX = Math.cos(rotX); sinX = Math.sin(rotX);
 
     /* project all nodes, then blend toward the silhouette targets */
     for (let i = 0; i < nodes.length; i++) {

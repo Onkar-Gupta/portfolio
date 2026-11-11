@@ -291,3 +291,7 @@ body.overclock { animation: inkFlip 3.5s steps(6) both; }
 @media (max-width: 820px) {
   nav { background: linear-gradient(var(--bg) 55%, transparent); padding-bottom: 14px; }
 }
+
+/* phones: the full-screen film grain is a large translucent layer the GPU has to composite every frame; the
+   brain forming and the scroll are smoother without it, and the picture does not band visibly */
+@media (max-width: 820px), (pointer: coarse) { body::before { display: none; } }
