@@ -40,7 +40,7 @@
     if (ctx) return true;
     const AC = window.AudioContext || window.webkitAudioContext;
     if (!AC) return false;
-    ctx = new AC({ latencyHint: 'playback' });   // a bigger buffer: phones crackle and stutter with the default small one
+    ctx = new AC({ latencyHint: 0.1 });   // about 100 ms: enough buffer to stop crackle, far less lag than 'playback' (which can be 300 ms or more on phones)
     master = ctx.createGain();
     master.gain.value = 0;
     const comp = ctx.createDynamicsCompressor();
@@ -376,9 +376,12 @@
 
     /* one-shots tied to a position in the film; they re-arm when you scroll back above */
     /* the alarm and shatter play as the second beat reaches the shatter */
-    if (inFilm && F.name === 'a2' && F.q > 0.15 && !fired.eject) { fired.eject = true; ejectSound(); }
+    /* phones play sound later than they show the picture (the 'playback' buffer plus the speaker path), so the
+       cues are brought forward by the measured delay; a2 and the catch last about 5 s and 12 s of video */
+    const lag = (ctx.baseLatency || 0) + (ctx.outputLatency || 0.12);
+    if (inFilm && F.name === 'a2' && F.q > 0.15 - lag * 0.19 && !fired.eject) { fired.eject = true; ejectSound(); }
     if (!inFilm || F.name === 'a1' || (F.name === 'a2' && F.q < 0.05)) fired.eject = false;
-    if (inFilm && F.name === 'catch' && F.q > 0.38 && !fired.catch) { fired.catch = true; catchSound(); }
+    if (inFilm && F.name === 'catch' && F.q > 0.38 - lag * 0.085 && !fired.catch) { fired.catch = true; catchSound(); }
     if (!inFilm || ['a1', 'a2', 'fall', 'orbit'].includes(F.name) || (F.name === 'catch' && F.q < 0.3)) fired.catch = false;
   }
   requestAnimationFrame(loop);
